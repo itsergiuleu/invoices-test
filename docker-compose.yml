@@ -1,0 +1,49 @@
+version: '3'
+services:
+  invoice-project-dreamlabs:
+    build:
+      context: '.'
+      dockerfile: Dockerfile
+    stdin_open: true
+    tty: true
+    volumes:
+      - .:/home/node/app:delegated
+    environment:
+      NODE_ENV: "local"
+      LOG_LEVEL: "DEBUG"
+      DB_HOST: "postgres"
+      DB_PORT: "5432"
+      DB_USER: "postgres"
+      DB_PASSWORD: "postgres"
+      DB_NAME: "postgres"
+
+    ports:
+      - "3000:3000"
+
+    command: "yarn start:dev"
+
+    networks:
+      - local-network-dreamlabs
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:14
+    restart: always
+    environment:
+      PGPASSWORD: 'postgres'
+      POSTGRES_DB: 'postgres'
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: 'postgres'
+    container_name: postgres
+
+    ports:
+      - "5432:5432"
+
+    networks:
+      - local-network-dreamlabs
+
+
+networks:
+  local-network-dreamlabs:
+    external: true
